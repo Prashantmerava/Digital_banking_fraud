@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: fraud-detection-service
+server:
+  port: ${PORT:8084}
+account:
+  service:
+    url: ${ACCOUNT_SERVICE_URL:http://localhost:8081}
+fraud:
+  max-transactions-per-minute: 5
+  suspicious-amount-multiplier: 3.0
+  max-balance-percentage: 0.90
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info

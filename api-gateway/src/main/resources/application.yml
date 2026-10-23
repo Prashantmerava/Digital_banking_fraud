@@ -1,0 +1,54 @@
+
+spring:
+  application:
+    name: api-gateway
+
+  cloud:
+    gateway:
+      routes:
+        # Proxy Account Service OpenAPI docs
+        - id: account-service-openapi
+          uri: ${ACCOUNT_SERVICE_URL:http://localhost:8081}
+          predicates:
+            - Path=/account-service/v3/api-docs,/account-service/v3/api-docs/**
+          filters:
+            - StripPrefix=1
+
+        # Proxy Transaction Service OpenAPI docs
+        - id: transaction-service-openapi
+          uri: ${TRANSACTION_SERVICE_URL:http://localhost:8082}
+          predicates:
+            - Path=/transaction-service/v3/api-docs,/transaction-service/v3/api-docs/**
+          filters:
+            - StripPrefix=1
+
+        # Account Service APIs
+        - id: account-service
+          uri: ${ACCOUNT_SERVICE_URL:http://localhost:8081}
+          predicates:
+            - Path=/api/v1/accounts/**
+
+        # Transaction Service APIs
+        - id: transaction-service
+          uri: ${TRANSACTION_SERVICE_URL:http://localhost:8082}
+          predicates:
+            - Path=/api/v1/transactions/**
+
+server:
+  port: ${PORT:8080}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,gateway
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    disable-swagger-default-url: true
+    urls:
+      - name: Account Service
+        url: /account-service/v3/api-docs
+      - name: Transaction Service
+        url: /transaction-service/v3/api-docs
